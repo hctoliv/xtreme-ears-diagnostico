@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Diagnóstico Xtreme Ears</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: relatório de uma coluna, como uma ficha técnica de palco; severidade lida como um medidor de nível (VU) */
+:root{
+  --bg:#f3f4f6; --surface:#ffffff; --ink:#151a22; --muted:#596273; --line:#d9dde4;
+  --accent:#d98a00; --crit:#c8321e; --high:#d98a00; --mid:#4a7a9c; --ok:#2f8a57;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12151b; --surface:#1a1f27; --ink:#e8ebf0; --muted:#9aa3b2; --line:#2c333e;
+  --accent:#f0a722; --crit:#ef5a42; --high:#f0a722; --mid:#73a6c9; --ok:#4fb57a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151b; --surface:#1a1f27; --ink:#e8ebf0; --muted:#9aa3b2; --line:#2c333e;
+  --accent:#f0a722; --crit:#ef5a42; --high:#f0a722; --mid:#73a6c9; --ok:#4fb57a; color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:860px;margin:0 auto;padding-block:48px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.05;margin:0}
+h1{font-size:clamp(44px,8vw,72px);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+h2{font-size:clamp(30px,5vw,40px);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+h3{font-size:22px;font-weight:600;letter-spacing:.3px}
+p{margin:0;max-width:65ch}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-direction:column;gap:18px;border-bottom:2px solid var(--ink);padding-bottom:28px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 24px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.lead{font-size:19px;max-width:60ch}
+.lead strong{color:var(--ink)}
+
+/* medidor de severidade */
+.vu{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;white-space:nowrap}
+.vu i{display:inline-flex;gap:2px}
+.vu i b{width:5px;height:12px;background:var(--line);border-radius:1px}
+.vu.crit{color:var(--crit)} .vu.crit i b{background:var(--crit)}
+.vu.high{color:var(--high)} .vu.high i b:nth-child(-n+3){background:var(--high)}
+.vu.mid{color:var(--mid)} .vu.mid i b:nth-child(-n+2){background:var(--mid)}
+
+.causes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.cause{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.cause p{font-size:15px;color:var(--muted)}
+
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.bad{color:var(--crit);font-weight:600}
+
+.issues{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.issue{display:grid;grid-template-columns:150px 1fr;gap:8px 24px;padding:22px 0;border-bottom:1px solid var(--line)}
+.issue>div{min-width:0;display:flex;flex-direction:column;gap:8px}
+.issue p,.issue li{font-size:15.5px}
+.issue ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.fix{font-size:15px;color:var(--muted)}
+.fix b{color:var(--ink);font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--bg);border:1px solid var(--line);border-radius:3px;padding:1px 5px;overflow-wrap:anywhere}
+@media (max-width:620px){.issue{grid-template-columns:1fr}}
+
+figure{margin:0;display:flex;flex-direction:column;gap:8px}
+figure img{border:1px solid var(--line);border-radius:6px;display:block;width:100%;height:auto}
+figcaption{font-size:13px;color:var(--muted);font-family:var(--mono)}
+.figs{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start}
+@media (max-width:620px){.figs{grid-template-columns:1fr}}
+
+ol.plan{margin:0;padding:0;list-style:none;counter-reset:p;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+ol.plan li{counter-increment:p;display:grid;grid-template-columns:48px 1fr;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+ol.plan li::before{content:counter(p,decimal-leading-zero);font-family:var(--display);font-size:30px;font-weight:600;color:var(--accent);line-height:1}
+ol.plan li div{min-width:0;display:flex;flex-direction:column;gap:4px}
+ol.plan li p{font-size:15px;color:var(--muted)}
+.when{font-family:var(--mono);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent)}
+
+.note{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--mid);border-radius:4px;padding:18px 20px;font-size:15px;display:flex;flex-direction:column;gap:8px}
+.note ul{margin:0;padding-left:20px}
+footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
+a{color:inherit;text-decoration-color:var(--accent);text-underline-offset:3px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Diagnóstico de conversão · loja e mídia paga</span>
+  <h1>Xtreme Ears</h1>
+  <p class="lead">O site é bonito e a marca é forte. O que trava a venda é outra coisa: <strong>o cliente vê três preços diferentes para o mesmo fone</strong>, precisa rolar quase quatro telas até o botão de compra e só descobre depois de pagar que ainda precisa ir a uma fonoaudióloga.</p>
+  <div class="meta">
+    <span>xtremeears.com.br</span>
+    <span>Análise de 05/11/2026</span>
+    <span>Shopify · tema Impulse 8.1</span>
+  </div>
+</header>
+
+<section>
+  <span class="eyebrow">Por que as campanhas não convertem</span>
+  <h2>As três causas principais</h2>
+  <div class="causes">
+    <div class="cause">
+      <span class="vu crit"><i><b></b><b></b><b></b><b></b></i>Crítico</span>
+      <h3>Preço desencontrado</h3>
+      <p>O anúncio promete um valor, a página cobra outro e a promoção só existe dentro da foto.</p>
+    </div>
+    <div class="cause">
+      <span class="vu crit"><i><b></b><b></b><b></b><b></b></i>Crítico</span>
+      <h3>Compra escondida</h3>
+      <p>Quem chega do anúncio no celular não vê preço, nota nem botão sem rolar 3,6 telas.</p>
+    </div>
+    <div class="cause">
+      <span class="vu high"><i><b></b><b></b><b></b><b></b></i>Alto</span>
+      <h3>Venda que ninguém mede</h3>
+      <p>Um fone de R$ 4 mil fecha no WhatsApp, e o clique no WhatsApp não volta para o Google Ads como conversão.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Erro 1 em detalhe</span>
+  <h2>O mesmo fone, quatro preços</h2>
+  <p>Valores coletados no mesmo dia, no site, nas imagens do produto, no cadastro da Shopify e nos anúncios do Google Shopping.</p>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>Onde aparece</th><th>XE4 PRO</th><th>XE12 PRO</th></tr></thead>
+      <tbody>
+        <tr><td>Texto da página de produto</td><td class="num">R$ 4.680,00</td><td class="num">a partir de R$ 11.890,00</td></tr>
+        <tr><td>Selo Black Friday gravado na foto</td><td class="num">R$ 3.978 à vista<br>12x R$ 390</td><td class="num">R$ 10.106,50 à vista<br>12x R$ 990,83</td></tr>
+        <tr><td>Anúncio no Google Shopping</td><td class="num bad">R$ 3.390,00</td><td class="num bad">R$ 16.440 e R$ 18.990</td></tr>
+        <tr><td>"Preço de" cadastrado na Shopify</td><td class="num bad">R$ 3.690 (menor que o "por")</td><td class="num">não cadastrado</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="figs">
+    <figure><img src="img/produto-xe4.jpg" alt="Página do XE4 PRO: a foto mostra R$ 3.978 à vista ou 12x R$ 390, e o texto ao lado mostra R$ 4.680,00 sem parcelamento" width="800" height="600"><figcaption>Desktop: a oferta está só na imagem. O texto mostra o preço cheio, sem parcelas.</figcaption></figure>
+    <figure><img src="img/mobile-xe4.jpg" alt="Primeira tela do XE4 PRO no celular, só com banner e texto descritivo, sem preço nem botão" width="375" height="812"><figcaption>Celular: a primeira tela não tem preço nem botão.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">No site</span>
+  <h2>Erros graves</h2>
+  <div class="issues">
+    <div class="issue">
+      <span class="vu crit"><i><b></b><b></b><b></b><b></b></i>Crítico</span>
+      <div>
+        <h3>"Preço de" menor que o "preço por" em quase todo o catálogo</h3>
+        <p>XE4 de 3.690 por 4.680, Stage de 690 por 890, XE5 de 4.390 por 5.290, Stage com microfone de 790 por 990. A Shopify não mostra o riscado nesse caso, então a Black Friday não aparece em texto em nenhum lugar do site.</p>
+        <p class="fix"><b>Correção:</b> cadastrar o preço cheio em "Comparar com" e o valor promocional em "Preço", e mostrar "ou 12x de R$ 390 sem juros" em texto abaixo do preço.</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu crit"><i><b></b><b></b><b></b><b></b></i>Crítico</span>
+      <div>
+        <h3>Botão de compra longe demais</h3>
+        <p>No XE4, o preço fica a cerca de 2.470px do topo no desktop e o botão Personalizar a 3,6 telas no celular, depois de banners grandes. A primeira dobra chega a abrir como um bloco preto enquanto o banner carrega.</p>
+        <p class="fix"><b>Correção:</b> preço, parcelas, nota 4,9 e botão na primeira tela. Os banners de som e acabamento vão para baixo do bloco de compra.</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu crit"><i><b></b><b></b><b></b><b></b></i>Crítico</span>
+      <div>
+        <h3>O molde só é explicado depois do pagamento</h3>
+        <p>O personalizador diz que as instruções do pré-molde chegam por e-mail depois do pedido. Antes de pagar, ninguém diz que é preciso ir a uma fonoaudióloga, quanto isso custa nem onde fica a mais próxima. Uma reclamação de 2026 no Reclame Aqui sobre o XE4 cita "custos extras".</p>
+        <p class="fix"><b>Correção:</b> bloco "Como funciona" em quatro passos na página do produto, com custo médio do molde e lista de fonoaudiólogas por cidade.</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu high"><i><b></b><b></b><b></b><b></b></i>Alto</span>
+      <div>
+        <h3>Produtos de teste e cópias publicados</h3>
+        <ul>
+          <li>"Produto de teste carta panda" a R$ 10, no sitemap do Google</li>
+          <li><code>adaptador-conector-usb-c-copia</code> com o título "Lightning - iPhone"</li>
+          <li><code>xtreme-stage-aquiles-priester-copia</code> com o título "XE3Pro"</li>
+          <li>Pedidos do personalizador (<code>cpb-order-…</code>) visíveis na lista pública de produtos</li>
+        </ul>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu high"><i><b></b><b></b><b></b><b></b></i>Alto</span>
+      <div>
+        <h3>Personalizador com atrito</h3>
+        <p>São mais de dez escolhas antes do carrinho. "Nome no fone" é obrigatório, e o aviso de erro aparece num pop-up roxo fora da identidade da marca. No XE4, o bloco "Você pode gostar também" recomenda o próprio XE4.</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu mid"><i><b></b><b></b><b></b><b></b></i>Médio</span>
+      <div>
+        <h3>Site pesado e tema esquecido</h3>
+        <p>A home faz cerca de 196 requisições, soma 2,2 MB e leva 8,9 s para carregar por completo. Os banners são PNG de até 3840px. O tema publicado se chama "MÊS DO ROCK - Principal backup 03/07", uma cópia de julho ainda no ar em novembro.</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu mid"><i><b></b><b></b><b></b><b></b></i>Médio</span>
+      <div>
+        <h3>SEO básico</h3>
+        <ul>
+          <li>Todas as páginas terminam com "Loja Fone Moldados Xtreme Ears" no título</li>
+          <li>A coleção de moldados mora em <code>/collections/frontpage</code></li>
+          <li>Dois H1 na página de produto e 22 de 34 imagens da home sem texto alternativo</li>
+          <li>Especificações sem unidade: impedância "25" sem Ω, resposta "10-17" sem Hz e kHz</li>
+          <li>Banners com nomes como "Design_sem_nome_61.png"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">No Google</span>
+  <h2>Busca, imagens e patrocinados</h2>
+  <figure><img src="img/google-shopping.jpg" alt="Busca xtreme ears no Google com produtos patrocinados: XE6 PRO Variant a R$ 8.390 e XE14 PRO a R$ 23.740" width="800" height="600"><figcaption>Busca "xtreme ears": títulos com "Variant…" e variantes caras no topo.</figcaption></figure>
+  <div class="issues">
+    <div class="issue">
+      <span class="vu crit"><i><b></b><b></b><b></b><b></b></i>Crítico</span>
+      <div>
+        <h3>Feed do Shopping quebrado</h3>
+        <p>Os títulos saem como "Fone In Ear XE6/PRO Variant for price 8390" e "XE12/PRO Variant for price 14700". Essas são variantes geradas pelo app do personalizador. O feed também anuncia as versões mais caras (XE14 a R$ 23.740) e um "XE3Pro Aquiles Priester" a R$ 1.027, que é uma cópia com o título errado.</p>
+        <p class="fix"><b>Correção:</b> enviar só a variante base de cada fone, com título limpo, e excluir do feed as variantes do personalizador, as cópias e os produtos de teste.</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu high"><i><b></b><b></b><b></b><b></b></i>Alto</span>
+      <div>
+        <h3>Anúncio errado na busca genérica</h3>
+        <p>Na busca "fone in ear moldado", o anúncio aparece com o título "Fone Gamer In Ear Intra-Auricular Profissional", que não é o que um músico procura nessa busca.</p>
+        <p class="fix"><b>Correção:</b> separar os grupos de anúncio por intenção: moldado para palco, universal, gamer e atenuador.</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu high"><i><b></b><b></b><b></b><b></b></i>Alto</span>
+      <div>
+        <h3>Reclame Aqui em 3º na busca da marca</h3>
+        <p>O Reclame Aqui aparece acima do segundo anúncio, e "xtreme ears reclame aqui" é uma sugestão do Google. A página está sem reputação, com 13 dias de tempo médio de resposta e reclamações de 2026 ainda sem avaliação.</p>
+        <p class="fix"><b>Correção:</b> responder em até 48h e pedir aos clientes atendidos que avaliem a reclamação.</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu mid"><i><b></b><b></b><b></b><b></b></i>Médio</span>
+      <div>
+        <h3>Sitelinks fracos e perfil desalinhado</h3>
+        <p>O sitelink "Fale Conosco: Preencha seus dados" leva a um formulário, um passo a mais para quem já buscou a marca. O perfil no Google tem nota 4,9 com 381 avaliações, mas está na categoria "Fabricante de eletrônicos", mostra o telefone (11) 3256-2692 enquanto o site só mostra o WhatsApp, e essa nota não aparece no site.</p>
+        <p class="fix"><b>Correção:</b> trocar os sitelinks por "Ver modelos e preços", "Como funciona o molde" e "Parcele em 12x".</p>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="vu mid"><i><b></b><b></b><b></b><b></b></i>Médio</span>
+      <div>
+        <h3>Imagens com preço gravado</h3>
+        <p>As fotos de produto são boas e profissionais. O problema é o selo de preço dentro da imagem: ele contradiz o texto do site e fica velho quando a promoção acaba. Para quem busca a marca, o primeiro resultado orgânico é a página "Como comprar?", e não a home.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Ordem de execução</span>
+  <h2>Plano de correção</h2>
+  <ol class="plan">
+    <li><div><span class="when">Esta semana</span><h3>Unificar o preço</h3><p>Corrigir "Comparar com" e "Preço" em todos os fones, mostrar o parcelamento em texto e tirar os selos de dentro das fotos.</p></div></li>
+    <li><div><span class="when">Esta semana</span><h3>Limpar o feed do Shopping</h3><p>Variante base com título limpo, sem as variantes do personalizador. Arquivar o produto de teste e as cópias.</p></div></li>
+    <li><div><span class="when">Esta semana</span><h3>Medir o WhatsApp</h3><p>Mensagem pré-preenchida por página ("Oi, vim pelo XE4 PRO"), evento de conversão no clique e envio das vendas fechadas no WhatsApp ao Google como conversão offline.</p></div></li>
+    <li><div><span class="when">Próximas 2 semanas</span><h3>Reorganizar a página de produto</h3><p>Preço, parcelas, nota 4,9 e botão Personalizar no topo, com o bloco "Como funciona" logo abaixo. Os banners editoriais vão para o fim.</p></div></li>
+    <li><div><span class="when">Próximas 2 semanas</span><h3>Explicar o molde antes da compra</h3><p>Quatro passos: escolhe, paga, faz o molde na fonoaudióloga (com custo médio e lista por cidade) e recebe em cerca de 4 semanas.</p></div></li>
+    <li><div><span class="when">Próximas 2 semanas</span><h3>Reestruturar as campanhas</h3><p>Grupos de anúncio por intenção e sitelinks que levam para modelos, molde e parcelamento.</p></div></li>
+    <li><div><span class="when">Mês seguinte</span><h3>Prova social perto do botão</h3><p>Levar os artistas da página "Quem usa" (Gilberto Gil, Anitta, Wesley Safadão e outros) e as avaliações do Google para junto do bloco de compra.</p></div></li>
+    <li><div><span class="when">Mês seguinte</span><h3>SEO, velocidade e reputação</h3><p>Títulos sem o sufixo antigo, <code>/collections/fones-moldados</code> com redirecionamento, um H1 por produto, alt nas imagens, especificações com unidade, banners em WebP, apps sem uso removidos e resposta rápida no Reclame Aqui.</p></div></li>
+  </ol>
+</section>
+
+<div class="note">
+  <span class="eyebrow">O que não foi verificado</span>
+  <ul>
+    <li>Checkout e pagamento, porque nenhum pedido foi finalizado.</li>
+    <li>Configuração interna do Google Ads, do GTM e das conversões. A falta de conversão do WhatsApp é uma hipótese a confirmar lá dentro.</li>
+    <li>Nenhum anúncio foi clicado, para não gerar custo de mídia.</li>
+  </ul>
+</div>
+
+<footer>Levantamento feito no site, na busca do Google (marca, genérica e imagens), nos anúncios do Shopping e no Reclame Aqui em 05/11/2026.</footer>
+</div>
+</body>
+</html>
